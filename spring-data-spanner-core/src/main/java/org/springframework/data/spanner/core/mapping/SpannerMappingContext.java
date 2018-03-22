@@ -20,51 +20,38 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.mapping.context.AbstractMappingContext;
-import org.springframework.data.mapping.model.FieldNamingStrategy;
-import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
+import org.springframework.data.mapping.model.Property;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
 import org.springframework.data.util.TypeInformation;
-
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 
 /**
  * Created by rayt on 3/14/17.
  */
-public class SpannerMappingContext extends AbstractMappingContext<BasicSpannerPersistentEntity<?>, SpannerPersistentProperty>
-    implements ApplicationContextAware {
+public class SpannerMappingContext extends AbstractMappingContext<BasicSpannerPersistentEntity<?>, SpannerPersistentProperty> implements ApplicationContextAware {
 
-  private static final FieldNamingStrategy DEFAULT_NAMING_STRATEGY = PropertyNameFieldNamingStrategy.INSTANCE;
-  private FieldNamingStrategy fieldNamingStrategy = DEFAULT_NAMING_STRATEGY;
+	private ApplicationContext context;
 
-  private ApplicationContext context;
+	public SpannerMappingContext() {
+	}
 
-  public SpannerMappingContext() {
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.context = applicationContext;
+	}
 
-  }
+	@Override
+	protected <T> BasicSpannerPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
+		BasicSpannerPersistentEntity<T> entity = new BasicSpannerPersistentEntity<T>(typeInformation);
 
-  public void setFieldNamingStrategy(FieldNamingStrategy fieldNamingStrategy) {
-    this.fieldNamingStrategy = fieldNamingStrategy == null ? DEFAULT_NAMING_STRATEGY : fieldNamingStrategy;
-  }
+		if (context != null) {
+			entity.setApplicationContext(context);
+		}
+		return entity;
+	}
 
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.context = applicationContext;
-  }
+	@Override
+	protected SpannerPersistentProperty createPersistentProperty(Property property, BasicSpannerPersistentEntity<?> owner, SimpleTypeHolder simpleTypeHolder) {
+		return new BasicSpannerPersistentProperty(property, owner, simpleTypeHolder);
+	}
 
-  @Override
-  protected <T> BasicSpannerPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
-    BasicSpannerPersistentEntity<T> entity = new BasicSpannerPersistentEntity<T>(typeInformation);
-
-    if (context != null) {
-      entity.setApplicationContext(context);
-    }
-
-    return entity;
-  }
-
-  @Override
-  protected SpannerPersistentProperty createPersistentProperty(Field field, PropertyDescriptor propertyDescriptor, BasicSpannerPersistentEntity<?> basicSpannerPersistentEntity, SimpleTypeHolder simpleTypeHolder) {
-    return new BasicSpannerPersistentProperty(field, propertyDescriptor, basicSpannerPersistentEntity, simpleTypeHolder, fieldNamingStrategy);
-  }
 }

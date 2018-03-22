@@ -17,27 +17,25 @@
 package org.springframework.data.spanner.core.mapping;
 
 import org.springframework.data.mapping.Association;
+import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.model.*;
 import org.springframework.util.StringUtils;
-
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 
 public class BasicSpannerPersistentProperty extends AnnotationBasedPersistentProperty<SpannerPersistentProperty> implements
     SpannerPersistentProperty {
 
   private FieldNamingStrategy fieldNamingStrategy;
 
-  public BasicSpannerPersistentProperty(Field field, PropertyDescriptor propertyDescriptor, PersistentEntity<?, SpannerPersistentProperty> owner, SimpleTypeHolder simpleTypeHolder, FieldNamingStrategy fieldNamingStrategy) {
-    super(field, propertyDescriptor, owner, simpleTypeHolder);
+  public BasicSpannerPersistentProperty(Property property, PersistentEntity<?, SpannerPersistentProperty> owner, SimpleTypeHolder simpleTypeHolder) {
+    super(property, owner, simpleTypeHolder);
     this.fieldNamingStrategy = fieldNamingStrategy == null ? PropertyNameFieldNamingStrategy.INSTANCE
         : fieldNamingStrategy;
   }
 
   @Override
   protected Association<SpannerPersistentProperty> createAssociation() {
-    return new Association<SpannerPersistentProperty>(this, null);
+    return new Association<>(this, null);
   }
 
   @Override

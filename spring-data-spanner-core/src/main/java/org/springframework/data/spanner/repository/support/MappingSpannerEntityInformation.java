@@ -19,12 +19,10 @@ package org.springframework.data.spanner.repository.support;
 import org.springframework.data.repository.core.support.PersistentEntityInformation;
 import org.springframework.data.spanner.core.mapping.SpannerPersistentEntity;
 
-import java.io.Serializable;
-
 /**
  * Created by rayt on 3/23/17.
  */
-public class MappingSpannerEntityInformation<T, ID extends Serializable> extends PersistentEntityInformation<T, ID>
+public class MappingSpannerEntityInformation<T, ID> extends PersistentEntityInformation<T, ID>
     implements SpannerEntityInformation<T, ID> {
   public MappingSpannerEntityInformation(SpannerPersistentEntity<T> entity) {
     super(entity);

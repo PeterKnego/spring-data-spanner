@@ -24,6 +24,7 @@ import org.springframework.data.spanner.repository.SpannerRepository;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by rayt on 3/23/17.
@@ -49,7 +50,7 @@ public class SimpleSpannerRepository<T, ID extends Serializable> implements Span
   }
 
   @Override
-  public <S extends T> Iterable<S> save(Iterable<S> entities) {
+  public <S extends T> Iterable<S> saveAll(Iterable<S> entities) {
     List<S> result = new ArrayList<>();
     for (S entity : entities) {
       // TODO fix me, this can be better in Spanner
@@ -59,14 +60,15 @@ public class SimpleSpannerRepository<T, ID extends Serializable> implements Span
   }
 
   @Override
-  public T findOne(ID id) {
-    return spannerOperations.find(entityInformation.getJavaType(), Key.of(id));
+  public Optional<T> findById(ID id) {
+    return Optional.of(spannerOperations.find(entityInformation.getJavaType(), Key.of(id)));
   }
 
   @Override
-  public boolean exists(ID id) {
-    return findOne(id) != null;
+  public boolean existsById(ID id) {
+    return spannerOperations.find(entityInformation.getJavaType(), Key.of(id)) != null ;
   }
+
 
   @Override
   public Iterable<T> findAll() {
@@ -74,9 +76,9 @@ public class SimpleSpannerRepository<T, ID extends Serializable> implements Span
   }
 
   @Override
-  public Iterable<T> findAll(Iterable<ID> iterable) {
+  public Iterable<T> findAllById(Iterable<ID> ids) {
     KeySet.Builder builder = KeySet.newBuilder();
-    for (ID id : iterable) {
+    for (ID id : ids) {
       builder.addKey(Key.of(id));
     }
 
@@ -89,9 +91,10 @@ public class SimpleSpannerRepository<T, ID extends Serializable> implements Span
   }
 
   @Override
-  public void delete(ID id) {
+  public void deleteById(ID id) {
     spannerOperations.delete(entityInformation.getJavaType(), Key.of(id));
   }
+
 
   @Override
   public void delete(T t) {
@@ -99,8 +102,9 @@ public class SimpleSpannerRepository<T, ID extends Serializable> implements Span
   }
 
   @Override
-  public void delete(Iterable<? extends T> entities) {
+  public void deleteAll(Iterable<? extends T> entities) {
     spannerOperations.delete(entityInformation.getJavaType(), entities);
+
   }
 
   @Override

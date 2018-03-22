@@ -17,12 +17,9 @@
 package org.springframework.data.spanner.repository.support;
 
 import org.springframework.data.repository.core.EntityInformation;
-import org.springframework.data.repository.core.support.AbstractEntityInformation;
-
-import java.io.Serializable;
 
 /**
  * Created by rayt on 3/23/17.
  */
-public interface SpannerEntityInformation<T, ID extends Serializable> extends EntityInformation<T, ID> {
+public interface SpannerEntityInformation<T, ID> extends EntityInformation<T, ID> {
 }
